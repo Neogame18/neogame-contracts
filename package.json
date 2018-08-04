@@ -1,0 +1,10 @@
+{
+  "name": "neogame-contracts",
+  "version": "0.1.0",
+  "description": "Ethereum smart contracts for neogame lottery platform",
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "zeppelin-solidity": "1.7.0"
+  }
+}
