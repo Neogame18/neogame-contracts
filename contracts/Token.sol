@@ -1,12 +1,12 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
-import 'zeppelin-solidity/contracts/token/ERC20/MintableToken.sol';
-import 'zeppelin-solidity/contracts/token/ERC20/StandardToken.sol';
-import 'zeppelin-solidity/contracts/ownership/NoOwner.sol';
+import "openzeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/StandardToken.sol";
+import "openzeppelin-solidity/contracts/ownership/NoOwner.sol";
 
 contract Token is MintableToken, NoOwner {
-    string public symbol = 'TKT';
-    string public name = 'Ticket token';
+    string public symbol = "TKT";
+    string public name = "Ticket token";
     uint8 public constant decimals = 18;
 
     address founder; //founder address to allow him transfer tokens while minting

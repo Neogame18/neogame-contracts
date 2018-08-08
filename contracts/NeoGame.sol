@@ -1,7 +1,8 @@
-pragma solidity ^0.4.19;
+pragma solidity ^0.4.24;
 
-import "zeppelin-solidity/contracts/token/ERC20/SafeERC20.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/SafeERC20.sol";
 import "./Token.sol";
+
 
 contract NeoGame {
     uint8 constant internal BET_SIZE = 5;
@@ -75,7 +76,7 @@ contract NeoGame {
     Token public token;
     Game[] public games;
 
-    function NeoGame(address _token) public {
+    constructor(address _token) public {
         token = Token(_token);
     }
 
@@ -172,7 +173,7 @@ contract NeoGame {
                 bonusBet : _bonusBet,
                 released : false
             }));
-        NewBet(games.length - 1, games[games.length - 1].tickets.length - 1, msg.sender);
+        emit NewBet(games.length - 1, games[games.length - 1].tickets.length - 1, msg.sender);
     }
 
     function createGame() private {
@@ -188,7 +189,7 @@ contract NeoGame {
         uint256 gameIndex = games.length - 1;
         games[gameIndex].block = getNextPeriodBlock();
         games[gameIndex].referenceGame = gameIndex;
-        GameCreated(games.length - 1);
+        emit GameCreated(games.length - 1);
     }
 
     function calculatePrizeFund() public view returns (uint256) {
@@ -241,7 +242,7 @@ contract NeoGame {
                     win = games[_gameIndex].bigPrizeWinners[i].win;
                 }
                 token.safeTransfer(games[_gameIndex].bigPrizeWinners[i].player, win);
-                PrizeSent(_gameIndex, 0, win, games[_gameIndex].bigPrizeWinners[i].player);
+                emit PrizeSent(_gameIndex, 0, win, games[_gameIndex].bigPrizeWinners[i].player);
             }
 
         } else {
@@ -253,13 +254,13 @@ contract NeoGame {
                 }
                 win = win * games[_gameIndex].prizeFund / allBigWinnersPrizes;
                 token.safeTransfer(games[_gameIndex].bigPrizeWinners[i].player, win);
-                PrizeSent(_gameIndex, 0, win, games[_gameIndex].bigPrizeWinners[i].player);
+                emit PrizeSent(_gameIndex, 0, win, games[_gameIndex].bigPrizeWinners[i].player);
             }
         }
         delete games[_gameIndex].bigPrizeWinners;
     }
 
-    function setNewReferenceGameToExpiredGames(uint256 _referenceIndex) private {
+    function setNewReferenceGameToExpiredGames(uint256 _referenceIndex) internal {
         if (_referenceIndex > 0) {
             for (uint256 i = _referenceIndex - 1; i >= 0; i--) {
 
@@ -284,7 +285,7 @@ contract NeoGame {
             }
             token.safeTransfer(msg.sender, TECH_BONUS);
             setNewReferenceGameToExpiredGames(_gameIndex);
-            WinnerNumbersBeingSet(_gameIndex);
+            emit WinnerNumbersBeingSet(_gameIndex);
         }
     }
 
@@ -320,7 +321,7 @@ contract NeoGame {
             } else {
                 token.safeTransfer(games[_gameIndex].tickets[_ticketIndex].player, win);
                 games[games[_gameIndex].referenceGame].prizeFund = games[games[_gameIndex].referenceGame].prizeFund - win;
-                PrizeSent(_gameIndex, _ticketIndex, win, games[_gameIndex].tickets[_ticketIndex].player);
+                emit PrizeSent(_gameIndex, _ticketIndex, win, games[_gameIndex].tickets[_ticketIndex].player);
             }
             games[_gameIndex].tickets[_ticketIndex].released = true;
         }

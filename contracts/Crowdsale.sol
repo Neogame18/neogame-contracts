@@ -1,9 +1,9 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
-import "zeppelin-solidity/contracts/math/SafeMath.sol";
-import "zeppelin-solidity/contracts/ownership/Ownable.sol";
-import "zeppelin-solidity/contracts/ownership/CanReclaimToken.sol";
-import "zeppelin-solidity/contracts/lifecycle/Destructible.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "openzeppelin-solidity/contracts/ownership/Ownable.sol";
+import "openzeppelin-solidity/contracts/ownership/CanReclaimToken.sol";
+import "openzeppelin-solidity/contracts/lifecycle/Destructible.sol";
 import "./Token.sol";
 
 contract Crowdsale is Ownable, CanReclaimToken, Destructible {
@@ -26,7 +26,7 @@ contract Crowdsale is Ownable, CanReclaimToken, Destructible {
 
     bool public finalized;
 
-    function Crowdsale(
+    constructor(
         uint64 _startTimestamp, uint64 _endTimestamp, uint256 _rate,
         uint256 _founderTokens, uint256 _goal, uint256 _hardCap
         ) public {
@@ -100,7 +100,7 @@ contract Crowdsale is Ownable, CanReclaimToken, Destructible {
     /**
     * @notice Sends all contributed ether back if minimum cap is not reached by the end of crowdsale
     */
-    function refund() public returns(bool){
+    function refund() public returns(bool) {
         return refundTo(msg.sender);
     }
     function refundTo(address beneficiary) public returns(bool) {
@@ -121,8 +121,8 @@ contract Crowdsale is Ownable, CanReclaimToken, Destructible {
         finalized = true;
         token.finishMinting();
         token.transferOwnership(owner);
-        if(tokensSold >= goal && this.balance > 0){
-            owner.transfer(this.balance);
+        if (tokensSold >= goal && address(this).balance > 0) {
+            owner.transfer(address(this).balance);
         }
     }
 
@@ -131,8 +131,8 @@ contract Crowdsale is Ownable, CanReclaimToken, Destructible {
     */
     function claimEther() public onlyOwner {
         require(tokensSold >= goal);
-        if(this.balance > 0){
-            owner.transfer(this.balance);
+        if (address(this).balance > 0) {
+            owner.transfer(address(this).balance);
         }
     }
 
